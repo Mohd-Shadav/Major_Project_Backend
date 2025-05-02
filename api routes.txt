@@ -1,0 +1,48 @@
+1. Payment Routes (paymentRoutes.js)
+POST /api/payments/create-order
+Description: Creates a new payment order.
+Access: Private (requires authentication).
+Functionality: This route takes a propertyId from the request body, retrieves the corresponding property details from the database, and initiates a payment order using Razorpay.
+POST /api/payments/verify
+Description: Verifies a payment.
+Access: Private (requires authentication).
+Functionality: This route receives payment verification details, checks the validity of the payment, and updates the payment status in the database.
+2. Property Routes (property.js)
+POST /api/properties/add-property
+Description: Adds a new property.
+Functionality: This route allows users to submit details for a new property, which will be added to the database.
+GET /api/properties/
+Description: Retrieves all properties.
+Functionality: This route fetches and returns a list of all properties stored in the database.
+GET /api/properties/:id
+Description: Retrieves a property by its ID.
+Functionality: This route fetches the details of a specific property based on the provided ID.
+GET /api/properties/user/:userId
+Description: Retrieves properties associated with a specific user ID.
+Functionality: This route fetches and returns properties that belong to a specific user, allowing users to see their listings.
+3. User Routes (user.js)
+POST /api/users/register
+Description: Registers a new user.
+Functionality: This route allows new users to create an account by submitting their details.
+POST /api/users/login
+Description: Logs in an existing user.
+Functionality: This route authenticates users based on their credentials and generates a JWT token for session management.
+POST /api/users/subscribe-premium
+Description: Subscribes a user to a premium plan.
+Functionality: This route processes subscription requests for premium services.
+POST /api/users/verify-payment
+Description: Verifies a user's payment.
+Functionality: This route checks and confirms the payment status for subscriptions.
+POST /api/users/change-password
+Description: Changes the user's password.
+Access: Requires authentication.
+Functionality: This route allows authenticated users to update their password.
+POST /api/users/forget-password
+Description: Initiates the password reset process.
+Functionality: This route sends a password reset link to the user's email.
+POST /api/users/forget-password/:id/:token
+Description: Completes the password reset process.
+Functionality: This route allows users to set a new password using the reset link.
+GET /api/users/:id
+Description: Retrieves user details by ID.
+Functionality: This route fetches information for a specific user based on their ID.

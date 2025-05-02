@@ -10,7 +10,7 @@ router.get('/:id', getPropertyById);
 
 
 
-module.exports = router;
+// module.exports = router;
 
 // Get Properties by User ID Route
 router.get('/user/:userId', userProperty);

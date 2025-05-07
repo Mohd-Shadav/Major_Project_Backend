@@ -5,6 +5,7 @@ const User = require('../models/user.js'); // Import the User model
 const Razorpay = require('razorpay'); // Razorpay for payment integration
 const crypto = require('crypto');
 const { log } = require('console');
+const nodemailer = require('nodemailer')
 
 
 
@@ -158,6 +159,109 @@ exports.verifyPayment = async(req, res) => {
 // };
 
 // Function to handle user registration
+// exports.userRegister = async(req, res) => {
+//     // Check if the user already exists in the database
+
+//     let user = await User.findOne({ email: req.body.email });
+//     if (user) {
+//         // If user exists, return a message
+//         return res.send('User  Already present In DataBase');
+//     } else {
+//         // If user does not exist, hash the password
+//         const NewPassword = await bcryptjs.hash(req.body.password, 10);
+//         // Create a new user object with the provided details
+//         console.log(NewPassword, "aaaaaaaaaaaaaaaa");
+//         user = User({
+//             // Plain password - will be hashed by pre-save middleware
+//             firstName: req.body.firstName,
+//             lastName: req.body.lastName,
+
+//             email: req.body.email,
+//             password: NewPassword, // Store the hashed password
+//             role: req.body.role,
+//             profilePicture: req.body.profilePicture
+//         });
+//         // Save the user to the database
+//         await user.save();
+//         console.log("yyyyyyyyyyyyyyyyyyyy");
+
+
+//         const token = jwt.sign({ userId: user._id },
+//             process.env.JWT_SECRET || 'pleaseSubscribe', { expiresIn: '24h' }
+//         );
+
+
+//         // Return user data (excluding password)
+//         const userData = {
+//             _id: user._id,
+//             email: user.email,
+//             firstName: user.firstName,
+//             lastName: user.lastName,
+//             role: user.role,
+//             profilePicture: user.profilePicture
+//         };
+
+//         // Return a success message
+//         res.status(201).json({
+//             token,
+//             user: userData
+//         });
+//     }
+// };
+
+// Function to handle user login
+// exports.userLogin = async(req, res) => {
+//     // Extract email and password from the request body
+//     const { email, password } = req.body;
+//     // Find the user in the database by email
+//     const user = await User.findOne({ email: req.body.email });
+//     if (!user) {
+//         // If user is not found, return an error message
+//         return res.status(400).json({
+//             message: "User  Not Found"
+//         });
+//     } else {
+//         // Check if both email and password are provided
+//         if (email && password) {
+//             // Verify the email and password
+//             if (email === user.email && await bcryptjs.compare(password, user.password)) {
+//                 // If credentials are valid, generate a JWT token
+//                 const token = jwt.sign({ userID: user._id }, "pleaseSubscribe", {
+//                     expiresIn: "2d", // Token expires in 2 days
+//                 });
+//                 // Return user data (excluding password)
+//                 const userData = {
+//                     _id: user._id,
+//                     email: user.email,
+//                     firstName: user.firstName,
+//                     lastName: user.lastName,
+//                     role: user.role,
+//                     profilePicture: user.profilePicture
+//                 };
+
+
+//                 // Return a success message with the token and user's name
+//                 return res.status(200).json({
+//                     message: "Login SuccessFul",
+//                     token: token,
+//                     user: userData
+//                 });
+//             } else {
+//                 // If credentials are invalid, return an error message
+//                 return res.status(400).json({
+//                     message: "Invalid Credentials"
+//                 });
+//             }
+//         } else {
+//             // If any field is missing, return an error message
+//             return res.status(400).json({
+//                 message: "All Fields are Require"
+//             });
+//         }
+//     }
+// };
+
+// Function to handle user registration
 exports.userRegister = async(req, res) => {
     // Check if the user already exists in the database
 
@@ -174,7 +278,7 @@ exports.userRegister = async(req, res) => {
             // Plain password - will be hashed by pre-save middleware
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-
+            phoneNo: req.body.phoneNo,
             email: req.body.email,
             password: NewPassword, // Store the hashed password
             role: req.body.role,
@@ -197,7 +301,9 @@ exports.userRegister = async(req, res) => {
             firstName: user.firstName,
             lastName: user.lastName,
             role: user.role,
-            profilePicture: user.profilePicture
+            phoneNo: user.phoneNo,
+            profilePicture: user.profilePicture,
+            subscription: user.subscription
         };
 
         // Return a success message
@@ -235,6 +341,8 @@ exports.userLogin = async(req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     role: user.role,
+                    phoneNo: user.phoneNo,
+                    userSubscription: user.subscription,
                     profilePicture: user.profilePicture
                 };
 
@@ -300,7 +408,7 @@ exports.forgetPassword = async(req, res) => {
         const token = jwt.sign({ userID: data._id }, secret_key, {
             expiresIn: '10m'
         });
-        const link = `http://localhost:3000/forget-password/${data._id}/${token}`;
+        const link = `http://localhost:5173/api/users/forget-password/${data._id}/${token}`;
         const transport = nodemailer.createTransport({
             service: "gmail",
             host: "smtp.gmail.com",
@@ -309,8 +417,8 @@ exports.forgetPassword = async(req, res) => {
             logger: true,
             secureConnection: false,
             auth: {
-                user: "markbaba88111@gmail.com",
-                pass: "ruko abev qgwm hfeu",
+                user: "hackerbhaiya5@gmail.com",
+                pass: "ljcd phkv kpvp qpnf",
             },
             tls: {
                 rejectUnAuthorized: true
@@ -376,7 +484,7 @@ exports.forgetPasswordEmail = async(req, res) => {
                 });
                 if (isSuccess) {
 
-                    return res.status(400).json({ message: "Password changed" });
+                    return res.status(200).json({ message: "Password changed" });
                 } else {
                     return res.status(400).json({ message: "Password Not changed" })
 
@@ -433,6 +541,37 @@ exports.findUserById = async(req, res) => {
 
 };
 
+
+
+exports.updateCredentials = async(req,res)=>{
+
+    const {id} = req.params;
+
+    try{
+
+        let user = await User.findOneAndUpdate(  { _id: req.params.id },        // or any other filter like { email: req.body.email }
+            {
+              $set: {
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                mobile: req.body.mobile,
+                address: req.body.address,
+              }
+            },
+            { new: true }                  // returns the updated document
+          )
+          .then(updatedUser => {
+            res.status(200).json(updatedUser);
+          })
+
+    }catch(error)
+    {
+        console.error(error);
+
+        res.status(500).json({ message: 'Error updating user', error: error.message });
+    }
+};
 
 
 // const bcryptjs = require('bcryptjs');

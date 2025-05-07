@@ -25,6 +25,15 @@ const userSchema = mongoose.Schema({
         enum: ['buyer', 'seller', 'agent'],
         default: 'user'
     },
+    address: {
+    type:String,
+    default:''
+    },
+    mobile:{
+      type:Number,
+      default:0,
+      
+    },
     profilePicture: {
         type: String,
         default: ''

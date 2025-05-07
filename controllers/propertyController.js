@@ -195,3 +195,65 @@ exports.userProperty = async(req, res) => {
         res.status(500).json({ message: 'Error retrieving properties', error: error.message });
     }
 }
+
+exports.getQuerySearch = async(req,res)=>{
+
+    let {preference,location,budget} = req.params;
+  
+    try{
+       
+        const property = await Property.find({
+            preference,
+            'address.city': { $regex: new RegExp(location, 'i') },
+            price:{$lte:parseInt(budget)}
+        });
+        res.status(200).json(property)
+
+    }catch(error)
+    {
+        console.error(error);
+        res.status(500).json({ message: 'Error retrieving properties', error: error.message });
+    }
+
+
+
+}
+
+exports.getCitySearch = async(req,res)=>{
+    let {location} = req.params;
+    try{
+       
+        const property = await Property.find({
+            
+            'address.city': { $regex: new RegExp(location, 'i') },
+            
+        });
+        res.status(200).json(property)
+
+    }catch(error)
+    {
+        console.error(error);
+        res.status(500).json({ message: 'Error retrieving properties', error: error.message });
+    }
+
+}
+
+exports.deleteProperty = async (req,res)=>{
+
+    const {id} = req.params;
+    console.log(req.params);
+
+   try{
+
+    const response = await Property.findOneAndDelete({_id:id});
+   
+    res.status(200);
+
+   }catch(error)
+   {
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving properties', error: error.message });
+   }
+
+
+}
